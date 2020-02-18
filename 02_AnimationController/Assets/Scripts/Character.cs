@@ -26,8 +26,9 @@ public class Character : MonoBehaviour
 
     public float runSpeed;
     public float distanceFromEnemy;
-    public Transform target;
+    public Character target;
     public Weapon weapon;
+    public float damage;
     Animator animator;
     Vector3 originalPosition;
     Quaternion originalRotation;
@@ -41,10 +42,9 @@ public class Character : MonoBehaviour
         originalRotation = transform.rotation;
     }
 
-    [ContextMenu("Attack")]
-    void AttackEnemy()
+    public void AttackEnemy()
     {
-        if (state != State.Death && target.GetComponent<Character>().state != State.Death) {
+        if (state != State.Death && target.state != State.Death) {
             switch (weapon)
             {
                 case Weapon.Bat:
@@ -62,6 +62,16 @@ public class Character : MonoBehaviour
         }
     }
 
+    public bool IsIdle()
+    {
+        return state == State.Idle;
+    }
+
+    public bool IsDead()
+    {
+        return state == State.Death;
+    }
+
     public void SetState(State newState)
     {
         state = newState;
@@ -69,7 +79,20 @@ public class Character : MonoBehaviour
 
     public void TargetSetState(State newState)
     {
-        target.GetComponent<Character>().SetState(newState);
+        target.SetState(newState);
+    }
+
+    public void DoDamageToTarget()
+    {
+        Health health = target.GetComponent<Health>();
+        if (health != null)
+        {
+            health.ApplyDamage(damage);
+            if (health.current <= 0.0f)
+            {
+                TargetSetState(State.BeginDeath);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -83,7 +106,7 @@ public class Character : MonoBehaviour
 
             case State.RunningToEnemy:
                 animator.SetFloat("speed", runSpeed);
-                if (RunTowards(target.position, distanceFromEnemy))
+                if (RunTowards(target.transform.position, distanceFromEnemy))
                 {
                     state = State.BeginAttack;
                 }
@@ -127,7 +150,7 @@ public class Character : MonoBehaviour
                 break;
 
             case State.BeginDeath:
-                Debug.Log(gameObject.name + "dead!");
+                Debug.Log(gameObject.name + " dead!");
                 animator.SetTrigger("killed");
                 state = State.Death;
                 break;

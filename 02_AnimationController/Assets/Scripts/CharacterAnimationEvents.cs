@@ -24,7 +24,7 @@ public class CharacterAnimationEvents : MonoBehaviour
     }
     void KillTarget()
     {
-        character.TargetSetState(Character.State.BeginDeath);
+        character.DoDamageToTarget();
     }
     void Death()
     {
