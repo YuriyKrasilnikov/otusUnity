@@ -2856,12 +2856,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9732a241b7bd0fa4a8e59553d6d8a2b0, type: 3}
---- !u!1 &1651548994 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2251404956068058175, guid: c90a5392ae8cb75408a8778785976687,
-    type: 3}
-  m_PrefabInstance: {fileID: 2251404957637752701}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1651548995 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2251404956068058174, guid: c90a5392ae8cb75408a8778785976687,
@@ -3162,8 +3156,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuSceneName: Menu
-  GameMenu: {fileID: 2053276180}
-  PauseMenu: {fileID: 1651548994}
   playerCharacters:
   - {fileID: 1199050489}
   enemyCharacters:
@@ -3241,12 +3233,6 @@ Transform:
   m_Father: {fileID: 2120990059}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2053276180 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4449407605490023481, guid: 476f97754b088b64cb42bbc77b13b31c,
-    type: 3}
-  m_PrefabInstance: {fileID: 4449407606129557037}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &2053276181 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4449407605490023480, guid: 476f97754b088b64cb42bbc77b13b31c,
@@ -3259,7 +3245,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 4449407606129557037}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053276180}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: baadbe37adde96e469cdb5ba28a3b2da, type: 3}
@@ -3733,7 +3719,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2251404957637752701}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651548994}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5266a451c23706347a14b232512e1534, type: 3}
