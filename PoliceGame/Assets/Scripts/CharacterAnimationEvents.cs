@@ -22,6 +22,7 @@ public class CharacterAnimationEvents : MonoBehaviour
     {
         character.SetState(Character.State.Idle);
     }
+
     void KillTarget()
     {
         character.DoDamageToTarget();

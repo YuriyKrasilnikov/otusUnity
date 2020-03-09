@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class LoadingLogicPage : MonoBehaviour
+public class LoadingLogicPage: SingletonMonoBehaviour<LoadingLogicPage>
 {
 
     public static LoadingLogicPage LLPage;
@@ -13,27 +13,11 @@ public class LoadingLogicPage : MonoBehaviour
     public float FakeLoadTime = 1f;
     public Slider ProgressBarSlider;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        DontDestroyOnLoad(this.gameObject);
         LoadinScreen.SetActive(false);
-        MakeThisTheOnlyLoadingLogicPage();
-    }
-
-    // Destroy copy of LoadingLogic
-    private void MakeThisTheOnlyLoadingLogicPage()
-    {
-        if (LLPage == null)
-        {
-            DontDestroyOnLoad(gameObject);
-            LLPage = this;
-        }
-        else
-        {
-            if (LLPage != this)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
     public void LoadScene(string sceneName, GameObject[] elementsToHideWhenLoading)

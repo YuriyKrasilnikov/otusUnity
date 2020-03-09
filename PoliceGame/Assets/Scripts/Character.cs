@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class Character : MonoBehaviour
 {
+
     public enum State
     {
         Idle,
@@ -29,15 +32,23 @@ public class Character : MonoBehaviour
     public Character target;
     public Weapon weapon;
     public float damage;
-    Animator animator;
-    Vector3 originalPosition;
-    Quaternion originalRotation;
-    State state = State.Idle;
+
+    private Animator animator;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
+    private State state = State.Idle;
+    private SoundPlayerСontrol selfSoundPlayerСontrol;
+
+    [HideInInspector]
+    public ParticleSystem shootFire;
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        selfSoundPlayerСontrol = GetComponent<SoundPlayerСontrol>();
         originalPosition = transform.position;
         originalRotation = transform.rotation;
     }
@@ -57,11 +68,12 @@ public class Character : MonoBehaviour
 
                 case Weapon.Pistol:
                     state = State.BeginShoot;
+                    shootFire.Play();
+                    selfSoundPlayerСontrol.Shoot();
                     break;
             }
         }
     }
-
     public bool IsIdle()
     {
         return state == State.Idle;
@@ -84,6 +96,21 @@ public class Character : MonoBehaviour
 
     public void DoDamageToTarget()
     {
+        switch (weapon)
+        {
+            case Weapon.Bat:
+                selfSoundPlayerСontrol.BatHit();
+                break;
+
+            case Weapon.Fist:
+                selfSoundPlayerСontrol.FistHit();
+                break;
+        }
+
+        HitEffectAnimation hitEffect = target.GetComponent<HitEffectAnimation>();
+
+        SoundPlayerСontrol targetSoundPlayerСontrol = target.GetComponent<SoundPlayerСontrol>();
+
         Health health = target.GetComponent<Health>();
         if (health != null)
         {
@@ -91,7 +118,13 @@ public class Character : MonoBehaviour
             if (health.current <= 0.0f)
             {
                 TargetSetState(State.BeginDeath);
+                targetSoundPlayerСontrol.Dead();
             }
+            else
+            {
+                targetSoundPlayerСontrol.Hit();
+            }
+            hitEffect.PlayEffect();
         }
     }
 
@@ -134,23 +167,22 @@ public class Character : MonoBehaviour
                         state = State.Attack;
                         break;
                 }
-                
-                
                 break;
 
             case State.Attack:
                 break;
 
             case State.BeginShoot:
-                animator.SetTrigger("shoot");
+                animator.SetTrigger("pistol_idle");
                 state = State.Shoot;
                 break;
 
             case State.Shoot:
+                animator.SetTrigger("shoot");
                 break;
 
             case State.BeginDeath:
-                Debug.Log(gameObject.name + " dead!");
+                //Debug.Log(gameObject.name + " dead!");
                 animator.SetTrigger("killed");
                 state = State.Death;
                 break;
@@ -174,11 +206,30 @@ public class Character : MonoBehaviour
         if (vector.magnitude < distance.magnitude)
         {
             transform.position += vector;
+            selfSoundPlayerСontrol.StartRun();
             return false;
         }
 
         transform.position = targetPosition;
+        selfSoundPlayerСontrol.StopRun();
         return true;
+    }
 
+}
+
+[CustomEditor(typeof(Character))]
+public class Character_Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        //The target variable is the selected script.
+        Character mb = (Character)target;
+
+        if (mb.weapon == Character.Weapon.Pistol)
+        {
+            mb.shootFire = EditorGUILayout.ObjectField("Shoot Effect", mb.shootFire, typeof(ParticleSystem), true) as ParticleSystem;
+        }
     }
 }

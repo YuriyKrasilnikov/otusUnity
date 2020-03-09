@@ -7,8 +7,11 @@ public class HealthIndicator : MonoBehaviour
 {
 
     public TextMeshProUGUI textField;
+    public TMP_FontAsset fontForDead;
+    public Color32 fontColorForDead;
     Health health;
     float displayedHealth;
+
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +27,17 @@ public class HealthIndicator : MonoBehaviour
         if (Mathf.Abs(displayedHealth - value) >= 0.00001f)
         {
             displayedHealth = value;
-            textField.text = $"{value}";
+            if (displayedHealth > 0)
+            {
+                textField.text = $"{value}";
+            }
+            else
+            {
+                textField.font = fontForDead;
+                textField.color = fontColorForDead;
+                textField.fontSize = 0.5f;
+                textField.text = "Dead";
+            }
         }
     }
 }

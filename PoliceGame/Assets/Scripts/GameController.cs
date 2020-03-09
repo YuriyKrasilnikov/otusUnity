@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour
+public class GameController: MonoBehaviour
 {
     private LoadingLogicPage LoadingLogic;
-    private bool GameIsPaused = false;
     public string MenuSceneName;
     private InGameMenu GameMenu;
     private InPauseMenu PauseMenu;
@@ -59,20 +58,29 @@ public class GameController : MonoBehaviour
         PauseMenu = pauseMenu;
     }
 
-    public bool Resume()
+    public void Resume()
     {
-        if (GameIsPaused) {
+        if (PauseMenu.gameObject.activeSelf) {
             PauseMenu.gameObject.SetActive(false);
             GameMenu.gameObject.SetActive(true);
             Time.timeScale = 1f;
-            GameIsPaused = false;
-            return GameIsPaused;
+            return;
         }
         GameMenu.gameObject.SetActive(false);
         PauseMenu.gameObject.SetActive(true);
         Time.timeScale = 0f;
-        GameIsPaused = true;
-        return GameIsPaused;
+    }
+
+    public void Setting()
+    {
+        if (PauseMenu.SettingScreen.activeSelf)
+        {
+            PauseMenu.PauseScreen.SetActive(true);
+            PauseMenu.SettingScreen.SetActive(false);
+            return;
+        }
+        PauseMenu.PauseScreen.SetActive(false);
+        PauseMenu.SettingScreen.SetActive(true);
     }
 
     public void Restart()
@@ -112,6 +120,10 @@ public class GameController : MonoBehaviour
         Resume();
         PauseMenu.ResumeButton.gameObject.SetActive(false);
         PauseMenu.WinText.SetActive(true);
+        Time.timeScale = 1f;
+
+        EventManager.Instance.SendEvent(EventId.PlayerWin);
+
         Debug.Log("Player won");
     }
 
@@ -120,6 +132,10 @@ public class GameController : MonoBehaviour
         Resume();
         PauseMenu.ResumeButton.gameObject.SetActive(false);
         PauseMenu.LostText.SetActive(true);
+        Time.timeScale = 1f;
+
+        EventManager.Instance.SendEvent(EventId.PlayerLose);
+
         Debug.Log("Player lost");
     }
 

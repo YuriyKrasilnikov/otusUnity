@@ -10,6 +10,8 @@ public class Health : MonoBehaviour
     public void ApplyDamage(float damage)
     {
         current -= damage;
+        if (current < 0)
+            current = 0;
     }
 
 }
