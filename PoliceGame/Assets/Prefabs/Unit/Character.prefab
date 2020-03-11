@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 6010144778301204579}
   - component: {fileID: 8306616584531445669}
   - component: {fileID: 6244315624936164891}
+  - component: {fileID: 2924018690727214662}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -417,6 +418,7 @@ MonoBehaviour:
   target: {fileID: 0}
   weapon: 0
   damage: 1
+  shootFire: {fileID: 0}
 --- !u!114 &4912517759085624428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,7 +474,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c153fd4cb729d7740ae642520a211808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitClip: {fileID: 8300000, guid: 88d1696d504d4da42910446089e9bb0c, type: 3}
+--- !u!114 &2924018690727214662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8005653227702665060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e86ff7f6933d88f48a37b130092a11ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterBalanceData: {fileID: 0}
 --- !u!1001 &3212043519155023316
 PrefabInstance:
   m_ObjectHideFlags: 0

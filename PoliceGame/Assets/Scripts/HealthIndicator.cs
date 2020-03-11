@@ -17,13 +17,13 @@ public class HealthIndicator : MonoBehaviour
     void Start()
     {
         health = GetComponent<Health>();
-        displayedHealth = health.current - 1.0f;
+        displayedHealth = health.Current - 1.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float value = health.current;
+        float value = health.Current;
         if (Mathf.Abs(displayedHealth - value) >= 0.00001f)
         {
             displayedHealth = value;

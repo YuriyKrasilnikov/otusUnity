@@ -107,6 +107,12 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2924018690727214662, guid: 73e1432563d8c1a48839445fb70ed3d9,
+        type: 3}
+      propertyPath: characterBalanceData
+      value: 
+      objectReference: {fileID: 11400000, guid: 211952feeed72ab47a8f699c974a5735,
+        type: 2}
     - target: {fileID: 7278828256971694386, guid: 73e1432563d8c1a48839445fb70ed3d9,
         type: 3}
       propertyPath: m_RootOrder

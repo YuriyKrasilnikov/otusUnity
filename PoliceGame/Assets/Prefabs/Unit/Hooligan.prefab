@@ -7,6 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6673458996406131643, guid: 73e1432563d8c1a48839445fb70ed3d9,
+        type: 3}
+      propertyPath: weapon
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127019468043624619, guid: 73e1432563d8c1a48839445fb70ed3d9,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2924018690727214662, guid: 73e1432563d8c1a48839445fb70ed3d9,
+        type: 3}
+      propertyPath: characterBalanceData
+      value: 
+      objectReference: {fileID: 11400000, guid: 6cbc5e6f2fb53de47b8227d537935057,
+        type: 2}
     - target: {fileID: 8005653227702665060, guid: 73e1432563d8c1a48839445fb70ed3d9,
         type: 3}
       propertyPath: m_Name
@@ -66,6 +82,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9110929491678400375, guid: 73e1432563d8c1a48839445fb70ed3d9,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73e1432563d8c1a48839445fb70ed3d9, type: 3}

@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class Character : MonoBehaviour
 {
@@ -31,7 +33,8 @@ public class Character : MonoBehaviour
     public float distanceFromEnemy;
     public Character target;
     public Weapon weapon;
-    public float damage;
+
+    private float damage = 1.0f;
 
     private Animator animator;
     private Vector3 originalPosition;
@@ -49,6 +52,7 @@ public class Character : MonoBehaviour
     {
         animator = GetComponentInChildren<Animator>();
         selfSoundPlayerСontrol = GetComponent<SoundPlayerСontrol>();
+        damage = GetComponent<Balance>().characterBalanceData.Damage;
         originalPosition = transform.position;
         originalRotation = transform.rotation;
     }
@@ -115,7 +119,7 @@ public class Character : MonoBehaviour
         if (health != null)
         {
             health.ApplyDamage(damage);
-            if (health.current <= 0.0f)
+            if (health.Current <= 0.0f)
             {
                 TargetSetState(State.BeginDeath);
                 targetSoundPlayerСontrol.Dead();
@@ -217,6 +221,7 @@ public class Character : MonoBehaviour
 
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Character))]
 public class Character_Editor : Editor
 {
@@ -233,3 +238,4 @@ public class Character_Editor : Editor
         }
     }
 }
+#endif
