@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TriggerDetector : MonoBehaviour
 {
-    public bool InTrigger;
+    public bool InTrigger = false;
     public GameObject LevelGround;
 
     private void OnTriggerEnter2D(Collider2D colliderInfo)

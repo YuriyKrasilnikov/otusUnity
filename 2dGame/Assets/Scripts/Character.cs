@@ -10,23 +10,22 @@ using System.Linq;
 public class Character : MonoBehaviour
 {
     public GameObject LevelZone;
-    public GameObject Menu;
     public Transform Visual;
     public float MoveForce;
     public float JumpForce;
     public float JumpForceHorizontal;
-
-    public CinemachineVirtualCamera CoinCamera;
 
     Rigidbody2D rigidBody2D;
     TriggerDetector triggerDetector;
     Animator animator;
     float visualDirection;
 
-   
+    private static readonly int AnimatorSpeed = Animator.StringToHash("speed");
+    private static readonly int AnimatorOnGround = Animator.StringToHash("onGround");
+
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         visualDirection = 1.0f;
         rigidBody2D = GetComponent<Rigidbody2D>();
@@ -34,17 +33,16 @@ public class Character : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
     }
 
-    private void Move(float force)
-    {   
+    public void Move(float force)
+    {
         if (triggerDetector.InTrigger)
         {
             //rigidBody2D.AddForce(new Vector2(MoveForce * force, 0), ForceMode2D.Force);
             rigidBody2D.velocity = new Vector2(MoveForce * force, rigidBody2D.velocity.y);
         }
-
     }
 
-    private void Jump()
+    public void Jump()
     {
         if (triggerDetector.InTrigger) {
             rigidBody2D.AddForce(new Vector2(rigidBody2D.velocity.x*JumpForceHorizontal, JumpForce), ForceMode2D.Impulse);
@@ -65,24 +63,16 @@ public class Character : MonoBehaviour
         scale.x = visualDirection;
         Visual.localScale = scale;
 
-        animator.SetFloat("speed", Mathf.Abs(vel));
-        animator.SetBool("onGround", triggerDetector.InTrigger);
+        animator.SetFloat(AnimatorSpeed, Mathf.Abs(vel));
+        animator.SetBool(AnimatorOnGround, triggerDetector.InTrigger);
     }
      
-    private void Update()
+    void Update()
     {
-        Move(Input.GetAxis("Horizontal"));
 
-        if (Input.GetButtonDown("Jump"))
+        if (rigidBody2D.rotation != 0)
         {
-            Jump();
-        }
-
-        //Debug.Log(rigidBody2D.velocity);
-
-        if(rigidBody2D.rotation != 0)
-        {
-            rigidBody2D.AddTorque(-rigidBody2D.rotation/25);
+            rigidBody2D.AddTorque(-rigidBody2D.rotation / 25);
         }
 
         MoveAnimate();
@@ -90,11 +80,7 @@ public class Character : MonoBehaviour
     }
 
     void OnTriggerExit2D(Collider2D colliderInfo) {
-        //Debug.Log("No longer in contact with " + colliderInfo.transform.name);
-
         if (colliderInfo.gameObject == LevelZone) {
-            Debug.Log("Dead!!!");
-            Menu.SetActive(true);
             Destroy(gameObject);
         }
     }

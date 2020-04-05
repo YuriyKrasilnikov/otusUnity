@@ -17,7 +17,7 @@ public class Coin : MonoBehaviour
 
             try
             {
-                colliderInfo.gameObject.GetComponent<Character>().CoinCamera.GetComponent<SelectFocus>().StartAnimate(colliderInfo.transform);
+                colliderInfo.gameObject.GetComponent<Player>().CoinCamera.GetComponent<SelectFocus>().StartAnimate(colliderInfo.transform);
             }
             catch (Exception e)
             {
