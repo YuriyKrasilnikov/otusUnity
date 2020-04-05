@@ -37,6 +37,7 @@ public class PathRequestManager : MonoBehaviour
             request.callback(waypoints);
             yield return null;
         }
+        yield break;
     }
 
 
