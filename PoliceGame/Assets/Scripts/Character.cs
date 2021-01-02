@@ -1,91 +1,58 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public class Character : MonoBehaviour
 {
-
     public enum State
     {
         Idle,
+
         RunningToEnemy,
         RunningFromEnemy,
-        BeginAttack,
-        Attack,
+
+        BeginCloseAttack,
+        CloseAttack,
+
         BeginShoot,
         Shoot,
-        BeginDeath,
-        Death
+
+        Dies,
+        Dead
     }
 
     public enum Weapon
     {
         Pistol,
         Bat,
-        Fist
+        Unarmed
     }
 
+    Animator animator;
+    State state;
+
+    public Weapon weapon;
+    public Transform target;
     public float runSpeed;
     public float distanceFromEnemy;
-    public Character target;
-    public Weapon weapon;
+    Vector3 originalPosition;
+    Quaternion originalRotation;
 
-    private float damage = 1.0f;
-
-    private Animator animator;
-    private Vector3 originalPosition;
-    private Quaternion originalRotation;
-    private State state = State.Idle;
-    private SoundPlayerСontrol selfSoundPlayerСontrol;
-
-    [HideInInspector]
-    public ParticleSystem shootFire;
-
-    
-
-    // Start is called before the first frame update
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
-        selfSoundPlayerСontrol = GetComponent<SoundPlayerСontrol>();
-        damage = GetComponent<Balance>().characterBalanceData.Damage;
+        state = State.Idle;
         originalPosition = transform.position;
         originalRotation = transform.rotation;
     }
 
-    public void AttackEnemy()
+    void TargetDies()
     {
-        if (state != State.Death && target.state != State.Death) {
-            switch (weapon)
-            {
-                case Weapon.Bat:
-                    state = State.RunningToEnemy;
-                    break;
-
-                case Weapon.Fist:
-                    state = State.RunningToEnemy;
-                    break;
-
-                case Weapon.Pistol:
-                    state = State.BeginShoot;
-                    shootFire.Play();
-                    selfSoundPlayerСontrol.Shoot();
-                    break;
-            }
-        }
-    }
-    public bool IsIdle()
-    {
-        return state == State.Idle;
+        target.gameObject.GetComponent<Character>().SetState( Character.State.Dies );
     }
 
-    public bool IsDead()
-    {
-        return state == State.Death;
+    public bool isDead(){
+        return false;
     }
 
     public void SetState(State newState)
@@ -93,149 +60,120 @@ public class Character : MonoBehaviour
         state = newState;
     }
 
-    public void TargetSetState(State newState)
+    [ContextMenu("Attack")]
+    void AttackTarget()
     {
-        target.SetState(newState);
-    }
-
-    public void DoDamageToTarget()
-    {
-        switch (weapon)
-        {
-            case Weapon.Bat:
-                selfSoundPlayerСontrol.BatHit();
-                break;
-
-            case Weapon.Fist:
-                selfSoundPlayerСontrol.FistHit();
-                break;
-        }
-
-        HitEffectAnimation hitEffect = target.GetComponent<HitEffectAnimation>();
-
-        SoundPlayerСontrol targetSoundPlayerСontrol = target.GetComponent<SoundPlayerСontrol>();
-
-        Health health = target.GetComponent<Health>();
-        if (health != null)
-        {
-            health.ApplyDamage(damage);
-            if (health.Current <= 0.0f)
-            {
-                TargetSetState(State.BeginDeath);
-                targetSoundPlayerСontrol.Dead();
+        if( CanAttack() ){
+            switch (weapon) {
+                case Weapon.Unarmed:
+                    state = State.RunningToEnemy;
+                    break;
+                case Weapon.Bat:
+                    state = State.RunningToEnemy;
+                    break;
+                case Weapon.Pistol:
+                    state = State.BeginShoot;
+                    break;
             }
-            else
-            {
-                targetSoundPlayerСontrol.Hit();
-            }
-            hitEffect.PlayEffect();
         }
     }
 
-    // Update is called once per frame
+    [ContextMenu("Attack", isValidateFunction:true)]
+    bool CanAttack()
+    {
+        return IsAlive() && IsTargetAlive();
+    }
+
+    public bool IsAlive()
+    {
+        return state != State.Dead;
+    }
+
+    public bool IsTargetAlive()
+    {
+        return target.gameObject.GetComponent<Character>().IsAlive();
+    }
+
     void FixedUpdate()
     {
-        switch (state){
+        switch (state) {
             case State.Idle:
-                animator.SetFloat("speed", 0.0f);
                 transform.rotation = originalRotation;
+                animator.SetFloat("Speed", 0.0f);
                 break;
 
             case State.RunningToEnemy:
-                animator.SetFloat("speed", runSpeed);
-                if (RunTowards(target.transform.position, distanceFromEnemy))
-                {
-                    state = State.BeginAttack;
-                }
+                animator.SetFloat("Speed", runSpeed);
+                if (RunTowards(target.position, distanceFromEnemy))
+                    state = State.BeginCloseAttack;
                 break;
 
             case State.RunningFromEnemy:
-                animator.SetFloat("speed", runSpeed);
+                animator.SetFloat("Speed", runSpeed);
                 if (RunTowards(originalPosition, 0.0f))
-                {
                     state = State.Idle;
-                }
                 break;
 
-            case State.BeginAttack:
-                animator.SetFloat("speed", 0.0f);
-                switch (weapon)
-                {
+            case State.BeginCloseAttack:
+                switch (weapon) {
+                    case Weapon.Unarmed:
+                        animator.SetTrigger("UnarmedAttack");
+                        break;
                     case Weapon.Bat:
-                        animator.SetTrigger("attack");
-                        state = State.Attack;
-                        break;
-
-                    case Weapon.Fist:
-                        animator.SetTrigger("punch");
-                        state = State.Attack;
+                        animator.SetTrigger("MeleeAttack");
                         break;
                 }
+                state = State.CloseAttack;
                 break;
 
-            case State.Attack:
+            case State.CloseAttack:
+                TargetDies();
                 break;
 
             case State.BeginShoot:
-                animator.SetTrigger("pistol_idle");
+                animator.SetTrigger("Shoot");
                 state = State.Shoot;
                 break;
 
             case State.Shoot:
-                animator.SetTrigger("shoot");
+                TargetDies();
                 break;
 
-            case State.BeginDeath:
-                //Debug.Log(gameObject.name + " dead!");
-                animator.SetTrigger("killed");
-                state = State.Death;
+            case State.Dies:
+                animator.SetBool("Dead", true);
+                state = State.Dead;
+                break;
+
+            case State.Dead:
                 break;
         }
-
     }
-
+    
     bool RunTowards(Vector3 targetPosition, float distanceFromTarget)
     {
-        Vector3 distance = targetPosition - transform.position;
-        Vector3 direction = distance.normalized;
+        //Debug.Log("targetPosition: " + targetPosition);
+        //Debug.Log("transform.position: " + transform.position);
 
+        Vector3 distance = targetPosition - transform.position;
+        if (distance.magnitude < 0.00001f) {
+            //Debug.Log("teleport");
+            transform.position = targetPosition;
+            return true;
+        }
+
+        Vector3 direction = distance.normalized;
         transform.rotation = Quaternion.LookRotation(direction);
 
-        //Debug.Log($"{distance.magnitude}");
-
         targetPosition -= direction * distanceFromTarget;
-        distance = targetPosition - transform.position;
+        distance = (targetPosition - transform.position);
 
-        Vector3 vector = direction * runSpeed;
-        if (vector.magnitude < distance.magnitude)
-        {
-            transform.position += vector;
-            selfSoundPlayerСontrol.StartRun();
+        Vector3 step = direction * runSpeed;
+        if (step.magnitude < distance.magnitude) {
+            transform.position += step;
             return false;
         }
 
         transform.position = targetPosition;
-        selfSoundPlayerСontrol.StopRun();
         return true;
     }
-
 }
-
-#if UNITY_EDITOR
-[CustomEditor(typeof(Character))]
-public class Character_Editor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-
-        //The target variable is the selected script.
-        Character mb = (Character)target;
-
-        if (mb.weapon == Character.Weapon.Pistol)
-        {
-            mb.shootFire = EditorGUILayout.ObjectField("Shoot Effect", mb.shootFire, typeof(ParticleSystem), true) as ParticleSystem;
-        }
-    }
-}
-#endif

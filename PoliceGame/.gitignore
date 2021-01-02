@@ -1,7 +1,9 @@
 /.vs
+/.history
 /obj
 /[Ll]ibrary/
 /[Ll]ogs/
 /[Tt]emp/
+/UserSettings/
 /*.csproj
 *.sln

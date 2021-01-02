@@ -6,16 +6,9 @@ public class CharacterAnimationEvents : MonoBehaviour
 {
     Character character;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         character = GetComponentInParent<Character>();
-    }
-
-    void AttackEnd()
-    {
-        character.SetState(Character.State.RunningFromEnemy);
     }
 
     void ShootEnd()
@@ -23,13 +16,8 @@ public class CharacterAnimationEvents : MonoBehaviour
         character.SetState(Character.State.Idle);
     }
 
-    void KillTarget()
+    void AttackEnd()
     {
-        character.DoDamageToTarget();
+        character.SetState(Character.State.RunningFromEnemy);
     }
-    void Death()
-    {
-        //Destroy(character.gameObject);
-    }
-
 }
